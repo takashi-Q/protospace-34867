@@ -1,4 +1,6 @@
 class PrototypesController < ApplicationController
+  before_action :authenticate_user!,only: [:edit, :update, :destroy, :new]
+  
    def index
     @prototypes = Prototype.all
   end
@@ -20,10 +22,13 @@ class PrototypesController < ApplicationController
       redirect_to root_path
     else
       redirect_to root_path
-  end
-end  
+    end
+  end   
   def edit
     @prototype = Prototype.find(params[:id])
+    if @prototype.user != current_user
+       redirect_to root_path
+   end   
   end
   def update
     @prototype = Prototype.find(params[:id])
@@ -42,5 +47,7 @@ end
     private
   def prototype_params
     params.require(:prototype).permit(:title, :catch_copy, :concept,:image).merge(user_id: current_user.id)  
-    end
+  end
+
+
 end
